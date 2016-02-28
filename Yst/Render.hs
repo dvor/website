@@ -145,7 +145,7 @@ converterForFormat :: Format -> String -> String
 converterForFormat f =
   let reader = handleError . readMarkdown def{readerSmart = True}
   in  case f of
-       HtmlFormat          -> writeHtmlString def{ writerHtml5 = True } . reader
+       HtmlFormat          -> writeHtmlString def{ writerHtml5 = True, writerNumberSections = True, writerHighlight = True } . reader
        LaTeXFormat         -> writeLaTeX def . reader
        PlainFormat         -> id
        ConTeXtFormat       -> writeConTeXt def . reader
