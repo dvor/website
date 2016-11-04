@@ -17,20 +17,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Yst.CSV (readCSVFile)
-where
-import Yst.Types
-import Yst.Util
-import Text.CSV
--- Note: ghc >= 6.12 (base >=4.2) supports unicode through iconv
--- So we use System.IO.UTF8 only if we have an earlier version
-#if MIN_VERSION_base(4,2,0)
-import Prelude hiding (catch)
-#else
-import Prelude hiding (readFile, catch)
-import System.IO.UTF8
-#endif
-import Control.Exception (catch, SomeException)
+module Yst.CSV (readCSVFile) where
+
+import           Control.Exception (SomeException, catch)
+import           Text.CSV
+import           Yst.Types
+import           Yst.Util
+
 
 readCSVFile :: FilePath -> IO Node
 readCSVFile f = catch (toNode `fmap` readFile f)
@@ -47,7 +40,7 @@ parseCSV' f s = case parseCSV f s of
 csvToNode :: CSV -> Node
 csvToNode [] = NNil
 csvToNode (fieldNames : records) =
-  NList $ map (\record -> NMap $ zip fieldNames $ map fieldToNode record) records 
+  NList $ map (\record -> NMap $ zip fieldNames $ map fieldToNode record) records
 
 fieldToNode :: Field -> Node
 fieldToNode s =

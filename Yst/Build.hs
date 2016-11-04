@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables, CPP #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-
 Copyright (C) 2009 John MacFarlane <jgm@berkeley.edu>
 
@@ -17,43 +17,27 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Yst.Build (buildSite)
-where
-import Yst.Types
-import Yst.Util
-import Yst.Render
-import qualified Data.Map as M
-import Data.Maybe (fromMaybe, mapMaybe)
-import Data.List
-import System.FilePath
-import System.Directory
-import System.Exit
-#if MIN_VERSION_directory(1,2,0)
-import Data.Time.Calendar (Day(..))
-import Data.Time.Clock (UTCTime(..), secondsToDiffTime)
-#else
-import System.Time (ClockTime(..))
-#endif
--- Note: ghc >= 6.12 (base >=4.2) supports unicode through iconv
--- So we use System.IO.UTF8 only if we have an earlier version
-#if MIN_VERSION_base(4,2,0)
-import System.IO (hPutStrLn)
-import Prelude hiding (catch)
-#else
-import Prelude hiding (readFile, putStrLn, print, writeFile, catch)
-import System.IO.UTF8
-#endif
-import System.IO (stderr)
-import Control.Monad
-import Control.Exception (catch, SomeException)
+module Yst.Build (buildSite) where
 
-#if MIN_VERSION_directory(1,2,0)
+import           Control.Exception  (SomeException, catch)
+import           Control.Monad
+import           Data.List
+import qualified Data.Map           as M
+import           Data.Maybe         (fromMaybe, mapMaybe)
+import           Data.Time.Calendar (Day (..))
+import           Data.Time.Clock    (UTCTime (..), secondsToDiffTime)
+import           System.Directory
+import           System.Exit
+import           System.FilePath
+import           System.IO          (hPutStrLn)
+import           System.IO          (stderr)
+import           Yst.Render
+import           Yst.Types
+import           Yst.Util
+
+
 minTime :: UTCTime
 minTime = UTCTime (ModifiedJulianDay 0) (secondsToDiffTime 0)
-#else
-minTime :: ClockTime
-minTime = TOD 0 0
-#endif
 
 
 findSource :: Site -> FilePath -> IO FilePath
@@ -70,9 +54,9 @@ dependencies site url = do
                  case sourceFile page of
                        TemplateFile f -> stripStExt f <.> "st"
                        SourceFile f   -> f
-  let fileFromSpec (DataFromFile f _) = Just f
+  let fileFromSpec (DataFromFile f _)      = Just f
       fileFromSpec (DataFromSqlite3 f _ _) = Just f
-      fileFromSpec _ = Nothing
+      fileFromSpec _                       = Nothing
   dataFiles <- mapM (searchPath $ dataDir site) $ mapMaybe (\(_,s) -> fileFromSpec s) $ pageData page
   return $ indexFile site : layout : srcdir : (requires ++ dataFiles)
 

@@ -1,4 +1,6 @@
-{-# LANGUAGE OverloadedStrings, ScopedTypeVariables, CPP #-}
+{-# LANGUAGE CPP                 #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-
 Copyright (C) 2009 John MacFarlane <jgm@berkeley.edu>
 
@@ -17,37 +19,26 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Yst.Render (renderPage)
-where
-import Yst.Types
-import Yst.Util
-import Yst.Data
-import System.Directory
-import Text.Pandoc hiding (Format)
-import Lucid
-import Data.Char
-import Data.List (intercalate)
-import Data.List.Split (wordsBy)
-import Text.StringTemplate
-import Data.Text.Lazy (unpack)
-import Data.Text (pack)
-import Data.Maybe (fromMaybe)
-import System.FilePath
--- Note: ghc >= 6.12 (base >=4.2) supports unicode through iconv
--- So we use System.IO.UTF8 only if we have an earlier version
-#if MIN_VERSION_base(4,2,0)
-#else
-import Prelude hiding (readFile, putStrLn, print, writeFile)
-import System.IO.UTF8
-#endif
-import Data.Time
-import Control.Monad
-#if MIN_VERSION_pandoc(1,14,0)
-import Text.Pandoc.Error (handleError)
-#else
-handleError :: Pandoc -> Pandoc
-handleError = id
-#endif
+module Yst.Render (renderPage) where
+
+import           Control.Monad
+import           Data.Char
+import           Data.List           (intercalate)
+import           Data.List.Split     (wordsBy)
+import           Data.Maybe          (fromMaybe)
+import           Data.Text           (pack)
+import           Data.Text.Lazy      (unpack)
+import           Data.Time
+import           Lucid
+import           System.Directory
+import           System.FilePath
+import           Text.Pandoc         hiding (Format)
+import           Text.Pandoc.Error   (handleError)
+import           Text.StringTemplate
+import           Yst.Data
+import           Yst.Types
+import           Yst.Util
+
 
 -- | @relUrl a b@ returns a URL for @b@ relative to @a@.  So, for
 -- example, @relUrl "a" "a/b.html" = "b.html"@,
@@ -66,12 +57,12 @@ takeUrlDir :: String -> String
 takeUrlDir = reverse . dropWhile (== '/') . dropWhile (/= '/') . reverse
 
 relPaths :: [String] -> [String] -> [String]
-relPaths [] ys = ys
-relPaths (_:xs) ys  = ".." : relPaths xs ys
+relPaths [] ys     = ys
+relPaths (_:xs) ys = ".." : relPaths xs ys
 
 dropCommon :: (Eq a) => [a] -> [a] -> ([a],[a])
 dropCommon (x:xs) (y:ys) | x == y = dropCommon xs ys
-dropCommon xs ys = (xs,ys)
+dropCommon xs ys         = (xs,ys)
 
 renderNav :: String -> [NavNode] -> String
 renderNav targeturl nodes = unpack $ renderText $
@@ -92,19 +83,19 @@ renderNavNode targeturl (NavMenu tit nodes) = li_ [] $
 
 formatFromExtension :: FilePath -> Format
 formatFromExtension f = case (map toLower $ takeExtension f) of
-                             ".html"  -> HtmlFormat
-                             ".xhtml" -> HtmlFormat
-                             ".latex" -> LaTeXFormat
-                             ".tex"   -> LaTeXFormat
-                             ".context" -> ConTeXtFormat
-                             ".1"     -> ManFormat
-                             ".rtf"   -> RTFFormat
-                             ".texi"  -> TexinfoFormat
-                             ".db"    -> DocBookFormat
-                             ".fodt"  -> OpenDocumentFormat
-                             ".txt"   -> PlainFormat
+                             ".html"     -> HtmlFormat
+                             ".xhtml"    -> HtmlFormat
+                             ".latex"    -> LaTeXFormat
+                             ".tex"      -> LaTeXFormat
+                             ".context"  -> ConTeXtFormat
+                             ".1"        -> ManFormat
+                             ".rtf"      -> RTFFormat
+                             ".texi"     -> TexinfoFormat
+                             ".db"       -> DocBookFormat
+                             ".fodt"     -> OpenDocumentFormat
+                             ".txt"      -> PlainFormat
                              ".markdown" -> PlainFormat
-                             _       -> HtmlFormat
+                             _           -> HtmlFormat
 
 renderPage :: Site -> Page -> IO String
 renderPage site page = do
@@ -116,8 +107,8 @@ renderPage site page = do
   attrs <- forM (pageData page) $ \(k, v) -> getData site v >>= \n -> return (k,n)
   todaysDate <- liftM utctDay getCurrentTime
   let root' = case length (filter (=='/') $ pageUrl page) of
-                    0  -> []
-                    n  -> concat $ replicate n ("../" :: String)
+                    0 -> []
+                    n -> concat $ replicate n ("../" :: String)
   rawContents <-
     case sourceFile page of
           SourceFile sf   -> liftM (filter (/='\r')) $ searchPath srcDirs sf >>= readFile
@@ -135,7 +126,7 @@ renderPage site page = do
          . setManyAttrib attrs
          . setAttribute "sitetitle" (siteTitle site)
          . setAttribute "pagetitle" (pageTitle page)
-         . setAttribute "gendate" todaysDate 
+         . setAttribute "gendate" todaysDate
          . setAttribute "contents" contents
          . setAttribute "root" root'
          . setAttribute "nav" menuHtml

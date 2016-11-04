@@ -1,4 +1,6 @@
-{-# LANGUAGE ScopedTypeVariables, FlexibleContexts #-}
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
+{-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-
 Copyright (C) 2009 John MacFarlane <jgm@berkeley.edu>
 
@@ -17,20 +19,21 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Yst.Data (getData, parseDataField)
-where
-import Yst.Types
-import Yst.Util
-import Yst.Yaml
-import Yst.CSV
-import Yst.Sqlite3 (readSqlite3)
-import Control.Monad
-import Data.Char
-import Data.Maybe (fromMaybe)
-import Data.List (sortBy, nub, isPrefixOf)
-import Text.ParserCombinators.Parsec
-import System.FilePath (takeExtension)
-import qualified Control.Exception as E
+module Yst.Data (getData, parseDataField) where
+
+import qualified Control.Exception             as E
+import           Control.Monad
+import           Data.Char
+import           Data.List                     (isPrefixOf, nub, sortBy)
+import           Data.Maybe                    (fromMaybe)
+import           System.FilePath               (takeExtension)
+import           Text.ParserCombinators.Parsec
+import           Yst.CSV
+import           Yst.Sqlite3                   (readSqlite3)
+import           Yst.Types
+import           Yst.Util
+import           Yst.Yaml
+
 
 findData :: Site -> FilePath -> IO FilePath
 findData = searchPath . dataDir
@@ -55,9 +58,9 @@ getData _ (DataConstant n) = return n
 readDataFile :: FilePath -> IO Node
 readDataFile f =
   case (map toLower $ takeExtension f) of
-       ".yaml"      -> readYamlFile f
-       ".csv"       -> readCSVFile f
-       _            -> readYamlFile f
+       ".yaml" -> readYamlFile f
+       ".csv"  -> readCSVFile f
+       _       -> readYamlFile f
 
 applyDataOption :: Node -> DataOption -> Node
 applyDataOption (NList ns) (Limit lim) =
@@ -113,7 +116,7 @@ compareNodeAt [] (NMap _) (NMap _) = EQ
 compareNodeAt _ _ _ = error "sortby and groupby can be used only on lists of maps"
 
 reverseIfDescending :: SortDirection -> Ordering -> Ordering
-reverseIfDescending Ascending o = o
+reverseIfDescending Ascending o   = o
 reverseIfDescending Descending EQ = EQ
 reverseIfDescending Descending LT = GT
 reverseIfDescending Descending GT = LT
@@ -124,7 +127,7 @@ parseDataField n@(NString s) = case parse pDataField s s of
   Right (f, Just query, opts) -> DataFromSqlite3 f query opts
   Left err        -> if "from" `isPrefixOf` (dropWhile isSpace $ map toLower s)
                         then error $ "Error parsing data field: " ++ show err
-                        else DataConstant n 
+                        else DataConstant n
 parseDataField n = DataConstant n
 
 pDataField :: GenParser Char st (String, Maybe String,[DataOption])
@@ -206,7 +209,7 @@ pOptGroupBy = try $ do
   optional $ oneOf ",;"
   spaces
   pString "group"
-  pSpace 
+  pSpace
   pString "by"
   pSpace
   keys <- spaces >> sepBy1 pIdentifier (try $ pSpace >> spaces >> pString "then" >> pSpace)
@@ -231,7 +234,7 @@ pInParens innerParser = try $ do
   res <- innerParser
   spaces
   char ')'
-  return res 
+  return res
 
 pNot :: GenParser Char st FilterCond
 pNot = try $ pString "not" >> pSpace >> liftM Not pBooleanCondition
@@ -271,8 +274,8 @@ pStringOrDateConstant :: GenParser Char st FilterArg
 pStringOrDateConstant = do
   str <- pQuoted '"' <|> pQuoted '\''
   case parseAsDate str of
-       Just d    -> return $ DateConstant d
-       Nothing   -> return $ StringConstant str
+       Just d  -> return $ DateConstant d
+       Nothing -> return $ StringConstant str
 
 pAttrValue :: GenParser Char st FilterArg
 pAttrValue = liftM AttrValue pIdentifier

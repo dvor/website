@@ -17,13 +17,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
 module Yst.Config (parseConfigFile, parseIndexFile) where
-import System.FilePath
-import Yst.Types
-import Yst.Util
-import Yst.Yaml
-import Yst.Data
-import Data.Char
-import qualified Data.Map as M
+
+import           Data.Char
+import qualified Data.Map        as M
+import           System.FilePath
+import           Yst.Data
+import           Yst.Types
+import           Yst.Util
+import           Yst.Yaml
+
 
 parseConfigFile :: FilePath -> IO Site
 parseConfigFile configfile = do

@@ -17,12 +17,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Yst.Yaml (readYamlFile)
-where
-import Yst.Types
-import Data.Yaml
+module Yst.Yaml (readYamlFile) where
+
+import           Data.Yaml
+import           Yst.Types
 
 readYamlFile :: FilePath -> IO Node
 readYamlFile f =
   (maybe (error $ "Could not parse " ++ f) id) `fmap` decodeFile f
-

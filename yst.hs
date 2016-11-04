@@ -16,26 +16,20 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Main
-where
-import Paths_yst
-import Yst.Util
-import Yst.Config
-import Yst.Build
-import System.FilePath
-import System.Environment
-import System.Directory
-import System.Exit
--- Note: ghc >= 6.12 (base >=4.2) supports unicode through iconv
--- So we use System.IO.UTF8 only if we have an earlier version
-#if MIN_VERSION_base(4,2,0)
-import System.IO (hPutStrLn)
-#else
-import Prelude hiding (readFile, putStrLn, print, writeFile)
-import System.IO.UTF8
-#endif
-import System.IO (stderr)
-import Control.Monad
+module Main where
+
+import           Control.Monad
+import           Paths_yst
+import           System.Directory
+import           System.Environment
+import           System.Exit
+import           System.FilePath
+import           System.IO          (hPutStrLn)
+import           System.IO          (stderr)
+import           Yst.Build
+import           Yst.Config
+import           Yst.Util
+
 
 createSite :: FilePath -> IO ()
 createSite path = do
@@ -47,12 +41,13 @@ createSite path = do
   demoDir <- getDataFileName "demo"
   contents <- liftM (filter (/=".") . map (makeRelative demoDir)) $ getDirectoryContentsRecursive demoDir
   forM_ contents $ \file -> do
-    let dest = path </> file 
+    let dest = path </> file
     createDirectoryIfMissing True $ takeDirectory dest
     copyFile (demoDir </> file) dest
   readme <- getDataFileName "README.markdown"
   copyFile readme (path </> "README")
   hPutStrLn stderr $ "Created starter site in " ++ path
+
 
 usageMessage :: IO ()
 usageMessage = hPutStrLn stderr $
@@ -61,13 +56,13 @@ usageMessage = hPutStrLn stderr $
   "yst [-f CONFIGFILE]        # build website\n" ++
   "yst create DIRECTORY       # create starter site in DIRECTORY"
 
+
 main :: IO ()
 main = do
   args <- getArgs
   site <- case args of
-               ["-f",x]     -> parseConfigFile x
-               []           -> parseConfigFile "config.yaml"
-               ["create",d] -> createSite d >> exitWith ExitSuccess
-               _            -> usageMessage >> exitWith (ExitFailure 1)
+    ["-f", x]     -> parseConfigFile x
+    []            -> parseConfigFile "config.yaml"
+    ["create", d] -> createSite d >> exitWith ExitSuccess
+    _             -> usageMessage >> exitWith (ExitFailure 1)
   buildSite site
-

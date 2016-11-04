@@ -16,22 +16,26 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
 
-module Yst.Util (stripBlanks, parseAsDate, stripStExt, getStrAttrWithDefault, getStrListWithDefault, fromNString, getDirectoryContentsRecursive, searchPath, errorExit)
-where
-import Yst.Types
-import System.Exit
-import System.FilePath
-import System.IO (stderr)
--- Note: ghc >= 6.12 (base >=4.2) supports unicode through iconv
--- So we use System.IO.UTF8 only if we have an earlier version
-#if MIN_VERSION_base(4,2,0)
-import System.IO (hPutStrLn)
-#else
-import System.IO.UTF8 (hPutStrLn)
-#endif
-import System.Directory
-import Data.List (intercalate)
-import Data.Char (isSpace)
+module Yst.Util
+  ( stripBlanks
+  , parseAsDate
+  , stripStExt
+  , getStrAttrWithDefault
+  , getStrListWithDefault
+  , fromNString
+  , getDirectoryContentsRecursive
+  , searchPath
+  , errorExit
+  ) where
+
+import           Data.Char        (isSpace)
+import           Data.List        (intercalate)
+import           System.Directory
+import           System.Exit
+import           System.FilePath
+import           System.IO        (stderr)
+import           System.IO        (hPutStrLn)
+import           Yst.Types
 
 -- | Strip blank lines from a file.
 stripBlanks :: String -> String
@@ -46,24 +50,24 @@ stripStExt f =
 getStrAttrWithDefault :: String -> String -> [(String, Node)] -> String
 getStrAttrWithDefault attr def xs =
   case lookup attr xs of
-        Just (NString s)   -> s
-        Just _             -> error $ attr ++ " must have string value."
-        Nothing            -> def
+        Just (NString s) -> s
+        Just _           -> error $ attr ++ " must have string value."
+        Nothing          -> def
 
 getStrListWithDefault :: String -> String -> [(String, Node)] -> [String]
 getStrListWithDefault attr def xs =
   case lookup attr xs of
     Just (NString s) -> [s]
-    Just (NList ys) -> map nodeToString ys
-    Just _ -> formatError
-    Nothing -> [def]
+    Just (NList ys)  -> map nodeToString ys
+    Just _           -> formatError
+    Nothing          -> [def]
   where nodeToString (NString s) = s
-        nodeToString _ = formatError
+        nodeToString _           = formatError
         formatError = error $ attr ++ " must be a string or list of strings."
 
 fromNString :: Node -> String
 fromNString (NString s) = s
-fromNString x = error $ "Expected string value, got " ++ show x
+fromNString x           = error $ "Expected string value, got " ++ show x
 
 getDirectoryContentsRecursive :: FilePath -> IO [FilePath]
 getDirectoryContentsRecursive path = do
