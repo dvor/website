@@ -137,7 +137,7 @@ instance FromJSON Node where
     | base10Exponent n >= 0 = return $ NString $ show $
                                   coefficient n * (10 ^ base10Exponent n)
     | otherwise             = return $ NString $ show n
-  parseJSON _ = return $ NNil
+  parseJSON _ = return NNil
 
 handleMerges :: H.HashMap T.Text Value -> H.HashMap T.Text Value
 handleMerges = H.foldrWithKey go H.empty
@@ -150,7 +150,7 @@ instance ToJSON Node where
   toJSON (NString s) = toJSON s
   toJSON (NMap xs)   = toJSON $ M.fromList xs
   toJSON (NList xs)  = toJSON xs
-  toJSON (NNil)      = toJSON ()
+  toJSON  NNil       = toJSON ()
 
 data SortDirection
   = Ascending
@@ -191,6 +191,6 @@ instance ToSElem Node
 
 parseAsDate :: (ParseTime t) => String -> Maybe t
 parseAsDate s =
-  msum $ map (\fs -> parsetimeWith fs s) formats
+  msum $ map (`parsetimeWith` s) formats
    where parsetimeWith = parseTimeM True defaultTimeLocale
          formats = ["%x","%m/%d/%Y", "%D","%F", "%d %b %Y"]

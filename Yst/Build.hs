@@ -29,8 +29,7 @@ import           Data.Time.Clock    (UTCTime (..), secondsToDiffTime)
 import           System.Directory
 import           System.Exit
 import           System.FilePath
-import           System.IO          (hPutStrLn)
-import           System.IO          (stderr)
+import           System.IO          (hPutStrLn, stderr)
 import           Yst.Render
 import           Yst.Types
 import           Yst.Util
@@ -44,10 +43,12 @@ findSource :: Site -> FilePath -> IO FilePath
 findSource = searchPath . sourceDir
 
 dependencies :: Site -> String -> IO [FilePath]
-dependencies site url = do
-  let page = case M.lookup url (pageIndex site) of
-                  Nothing   -> error $ "Tried to get dependencies for nonexistent page: " ++ url
-                  Just pg   -> pg
+dependencies site url =
+  let
+    page = fromMaybe
+      (error $ "Tried to get dependencies for nonexistent page: " ++ url)
+      (M.lookup url (pageIndex site))
+  in do
   layout <- findSource site $ stripStExt (fromMaybe (defaultLayout site) $ layoutFile page) <.> "st"
   requires <- mapM (findSource site) $ requiresFiles page
   srcdir <- findSource site $
@@ -60,10 +61,12 @@ dependencies site url = do
   dataFiles <- mapM (searchPath $ dataDir site) $ mapMaybe (\(_,s) -> fileFromSpec s) $ pageData page
   return $ indexFile site : layout : srcdir : (requires ++ dataFiles)
 
+filesIn :: FilePath -> IO [String]
+filesIn dir = fmap (filter (/=".") . map (makeRelative dir)) (getDirectoryContentsRecursive dir)
+
 buildSite :: Site -> IO ()
 buildSite site = do
-  let filesIn dir = liftM (filter (/=".") . map (makeRelative dir)) $ getDirectoryContentsRecursive dir
-  files <- liftM concat $ mapM filesIn $ filesDir site
+  files <- fmap concat $ mapM filesIn $ filesDir site
   let pages = M.keys $ pageIndex site
   let overlap = files `intersect` pages
   unless (null overlap) $ forM_ overlap
@@ -82,12 +85,10 @@ updateFile site file = do
   srcmod <- getModificationTime srcpath
   destmod <- catch (getModificationTime destpath)
                    (\(_::SomeException) -> return minTime)
-  if srcmod > destmod
-     then do
-       createDirectoryIfMissing True $ takeDirectory destpath
-       hPutStrLn stderr $ "Updating " ++ destpath
-       copyFile srcpath destpath
-     else return ()
+  when (srcmod > destmod) $ do
+    createDirectoryIfMissing True $ takeDirectory destpath
+    hPutStrLn stderr $ "Updating " ++ destpath
+    copyFile srcpath destpath
 
 updatePage :: Site -> Page -> IO ()
 updatePage site page = do
@@ -102,9 +103,7 @@ updatePage site page = do
   depsmod <- mapM getModificationTime deps
   destmod <- catch (getModificationTime destpath)
                    (\(_::SomeException) -> return minTime)
-  if maximum depsmod > destmod
-     then do
-       createDirectoryIfMissing True $ takeDirectory destpath
-       hPutStrLn stderr $ "Updating " ++ destpath
-       renderPage site page >>= writeFile destpath
-     else return ()
+  when (maximum depsmod > destmod) $ do
+    createDirectoryIfMissing True $ takeDirectory destpath
+    hPutStrLn stderr $ "Updating " ++ destpath
+    renderPage site page >>= writeFile destpath

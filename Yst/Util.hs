@@ -33,8 +33,7 @@ import           Data.List        (intercalate)
 import           System.Directory
 import           System.Exit
 import           System.FilePath
-import           System.IO        (stderr)
-import           System.IO        (hPutStrLn)
+import           System.IO        (hPutStrLn, stderr)
 import           Yst.Types
 
 -- | Strip blank lines from a file.
@@ -43,9 +42,9 @@ stripBlanks = intercalate "\n" . filter (not . all isSpace) . lines
 
 stripStExt :: FilePath -> FilePath
 stripStExt f =
-  if (takeExtension f == ".st")
-     then dropExtension f
-     else f
+  if takeExtension f == ".st"
+    then dropExtension f
+    else f
 
 getStrAttrWithDefault :: String -> String -> [(String, Node)] -> String
 getStrAttrWithDefault attr def xs =
@@ -73,12 +72,12 @@ getDirectoryContentsRecursive :: FilePath -> IO [FilePath]
 getDirectoryContentsRecursive path = do
   isDir <- doesDirectoryExist path
   if isDir
-     then do
-       contents <- getDirectoryContents path
-       let contents' = map (path </>) $ filter (`notElem` ["..","."]) contents
-       children <- mapM getDirectoryContentsRecursive contents'
-       return (concat children)
-     else return [path]
+    then do
+      contents <- getDirectoryContents path
+      let contents' = map (path </>) $ filter (`notElem` ["..","."]) contents
+      children <- mapM getDirectoryContentsRecursive contents'
+      return (concat children)
+    else return [path]
 
 searchPath :: [FilePath] -> FilePath -> IO FilePath
 searchPath [] file = return file       -- may or may not exist, but we tried.

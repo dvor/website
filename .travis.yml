@@ -1,18 +1,22 @@
-language: haskell
+language: generic
+sudo: required
 
 cache:
   directories:
     - $HOME/.cabal
     - $HOME/.ghc
 
+env: CABALVER=1.18 GHCVER=7.8.4
+addons: {apt: {packages: [alex-3.1.7, happy-1.19.5, cabal-install-1.18, ghc-7.8.4], sources: [hvr-ghc]}}
+
 install:
-  - CABAL_FLAGS="--enable-tests --enable-benchmarks --enable-library-coverage"
+  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:/opt/alex/3.1.7/bin:/opt/happy/1.19.5/bin:$PATH
   - cabal update
-  - cabal install happy 'JuicyPixels-3.2.7' -v2 || cat /home/travis/.cabal/logs/JuicyPixels-3.2.7.log
 
 script:
-  - cabal install --only-dependencies $CABAL_FLAGS
+  - CABAL_FLAGS="--enable-tests --enable-benchmarks --enable-library-coverage"
+  - cabal install --only-dependencies $CABAL_FLAGS || cat /home/travis/.cabal/logs/JuicyPixels-3.2.8.log
   - cabal configure $CABAL_FLAGS
-  - cabal build --ghc-options=-Werror
+  - cabal build
   - cabal test
   - cabal check

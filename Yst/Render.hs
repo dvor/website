@@ -82,20 +82,21 @@ renderNavNode targeturl (NavMenu tit nodes) = li_ [] $
           isInNavNode u (NavMenu _ ns) = u `isInNavNodes` ns
 
 formatFromExtension :: FilePath -> Format
-formatFromExtension f = case (map toLower $ takeExtension f) of
-                             ".html"     -> HtmlFormat
-                             ".xhtml"    -> HtmlFormat
-                             ".latex"    -> LaTeXFormat
-                             ".tex"      -> LaTeXFormat
-                             ".context"  -> ConTeXtFormat
-                             ".1"        -> ManFormat
-                             ".rtf"      -> RTFFormat
-                             ".texi"     -> TexinfoFormat
-                             ".db"       -> DocBookFormat
-                             ".fodt"     -> OpenDocumentFormat
-                             ".txt"      -> PlainFormat
-                             ".markdown" -> PlainFormat
-                             _           -> HtmlFormat
+formatFromExtension f =
+  case map toLower $ takeExtension f of
+    ".html"     -> HtmlFormat
+    ".xhtml"    -> HtmlFormat
+    ".latex"    -> LaTeXFormat
+    ".tex"      -> LaTeXFormat
+    ".context"  -> ConTeXtFormat
+    ".1"        -> ManFormat
+    ".rtf"      -> RTFFormat
+    ".texi"     -> TexinfoFormat
+    ".db"       -> DocBookFormat
+    ".fodt"     -> OpenDocumentFormat
+    ".txt"      -> PlainFormat
+    ".markdown" -> PlainFormat
+    _           -> HtmlFormat
 
 renderPage :: Site -> Page -> IO String
 renderPage site page = do
@@ -105,13 +106,13 @@ renderPage site page = do
   gs <- mapM directoryGroupRecursive srcDirs
   let g = foldl1 mergeSTGroups gs
   attrs <- forM (pageData page) $ \(k, v) -> getData site v >>= \n -> return (k,n)
-  todaysDate <- liftM utctDay getCurrentTime
+  todaysDate <- fmap utctDay getCurrentTime
   let root' = case length (filter (=='/') $ pageUrl page) of
                     0 -> []
                     n -> concat $ replicate n ("../" :: String)
   rawContents <-
     case sourceFile page of
-          SourceFile sf   -> liftM (filter (/='\r')) $ searchPath srcDirs sf >>= readFile
+          SourceFile sf   -> fmap (filter (/='\r')) $ searchPath srcDirs sf >>= readFile
           TemplateFile tf -> do
             templ <- getTemplate tf g
             return $ render
@@ -147,14 +148,17 @@ converterForFormat f =
        OpenDocumentFormat  -> writeOpenDocument def . reader
 
 getTemplate :: Stringable a => String -> STGroup a -> IO (StringTemplate a)
-getTemplate templateName templateGroup = do
-  let template = case getStringTemplate (stripStExt templateName) templateGroup of
-                       Just pt  -> pt
-                       Nothing  -> error $ "Could not load template: " ++ templateName
+getTemplate templateName templateGroup =
+  let
+    template = fromMaybe
+      (error $ "Could not load template: " ++ templateName)
+      (getStringTemplate (stripStExt templateName) templateGroup)
+  in do
   case checkTemplate template of
-       (Just parseErrors, _, _ )       -> errorExit 17 $ "Error in template '" ++ templateName ++
-                                             "': " ++ parseErrors
-       (_, _, Just templatesNotFound)  -> errorExit 21 $ "Templates referenced in template '" ++ templateName ++
-                                             "' not found: " ++ (intercalate ", " templatesNotFound)
-       (_, _, _)                       -> return ()
+    (Just parseErrors, _, _ ) ->
+      errorExit 17 $ "Error in template '" ++ templateName ++ "': " ++ parseErrors
+    (_, _, Just templatesNotFound) ->
+      errorExit 21 $ "Templates referenced in template '" ++ templateName ++ "' not found: " ++ intercalate ", " templatesNotFound
+    (_, _, _) ->
+      return ()
   return template

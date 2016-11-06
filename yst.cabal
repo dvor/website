@@ -77,10 +77,9 @@ Executable           yst
     , scientific
     , split
     , text
-    , time
+    , time                  >= 1.5
     , unordered-containers
     , yaml
   ghc-options:
     -Wall
-    -dynamic
     -fno-warn-orphans

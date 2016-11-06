@@ -16,8 +16,8 @@ readSqlite3 filename query = do
   disconnect conn
 
   return $ NList $ map (NMap .
-                       (zip fieldNames) .
-                       (map (fieldToNode . fromMaybe ""))) records
+                       zip fieldNames .
+                       map (fieldToNode . fromMaybe "")) records
 
 
 fieldToNode :: String -> Node

@@ -18,8 +18,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Yst.Config (parseConfigFile, parseIndexFile) where
 
+import           Control.Arrow   (second)
 import           Data.Char
 import qualified Data.Map        as M
+import qualified Data.Maybe      as Maybe
 import           System.FilePath
 import           Yst.Data
 import           Yst.Types
@@ -55,7 +57,7 @@ parseIndexFile indexfile = do
 
 processItem :: Node -> ([Page], [NavNode]) -> ([Page], [NavNode])
 processItem (NMap [(s, NList xs)]) (index, nav) = -- a submenu
-  (pages ++ index, (NavMenu s navnodes) : nav)
+  (pages ++ index, NavMenu s navnodes : nav)
     where (pages, navnodes) = foldr processItem ([], []) xs
 processItem (NMap xs) (index, nav) =  -- a page
   (page : index, newnav)
@@ -69,9 +71,9 @@ processPage :: [(String, Node)] -> Page
 processPage xs =
   Page { pageData     = case lookup "data" xs of
                              Nothing        -> []
-                             Just (NMap ds) -> map (\(k,v) -> (k, parseDataField v)) ds
+                             Just (NMap ds) -> map (second parseDataField) ds
                              Just _         -> error "data must be a YAML map"
-       , layoutFile   = fmap fromNString $ lookup "layout" xs
+       , layoutFile   = fmap fromNString (lookup "layout" xs)
        , sourceFile   = case (lookup "source" xs, lookup "template" xs) of
                              (Nothing, Nothing)  -> error "No 'source' or 'template' found for page."
                              (Nothing, Just f)   -> TemplateFile $ fromNString f
@@ -84,14 +86,13 @@ processPage xs =
                               Just _           -> error "'requires' must be scalar or list"
        , pageUrl      = url
        , pageTitle    = getStrAttrWithDefault "title" (dropExtension url) xs
-       , pageInMenu   = (map toLower $ getStrAttrWithDefault "inmenu" "yes" xs) `notElem`
-                          ["no","false"]
+       , pageInMenu   = map toLower (getStrAttrWithDefault "inmenu" "yes" xs) `notElem` ["no","false"]
        }
-    where getPageField f = case (fmap fromNString $ lookup f xs) of
-                             Just s  -> s
-                             Nothing -> error $ "Missing required " ++ f ++ " field in page definition"
+    where getPageField f =
+            maybe
+              (error $ "Missing required " ++ f ++ " field in page definition")
+              fromNString
+              (lookup f xs)
           url = getPageField "url"
           getStrAttr (NString s) = s
           getStrAttr x           = error $ "expected string, got " ++ show x
-
-

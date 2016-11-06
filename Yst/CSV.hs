@@ -40,7 +40,7 @@ parseCSV' f s = case parseCSV f s of
 csvToNode :: CSV -> Node
 csvToNode [] = NNil
 csvToNode (fieldNames : records) =
-  NList $ map (\record -> NMap $ zip fieldNames $ map fieldToNode record) records
+  NList $ map (NMap . zip fieldNames . map fieldToNode) records
 
 fieldToNode :: Field -> Node
 fieldToNode s =

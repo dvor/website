@@ -57,10 +57,10 @@ getData _ (DataConstant n) = return n
 
 readDataFile :: FilePath -> IO Node
 readDataFile f =
-  case (map toLower $ takeExtension f) of
-       ".yaml" -> readYamlFile f
-       ".csv"  -> readCSVFile f
-       _       -> readYamlFile f
+  case map toLower $ takeExtension f of
+    ".yaml" -> readYamlFile f
+    ".csv"  -> readCSVFile f
+    _       -> readYamlFile f
 
 applyDataOption :: Node -> DataOption -> Node
 applyDataOption (NList ns) (Limit lim) =
@@ -82,10 +82,10 @@ satisfiesCond :: FilterCond -> Node -> Bool
 satisfiesCond (And c1 c2)     n = satisfiesCond c1 n && satisfiesCond c2 n
 satisfiesCond (Or  c1 c2)     n = satisfiesCond c1 n || satisfiesCond c2 n
 satisfiesCond (Not c1)        n = not (satisfiesCond c1 n)
-satisfiesCond (Has s) (NMap ns) = elem s (map fst ns)
+satisfiesCond (Has s) (NMap ns) = s `elem` map fst ns
 satisfiesCond (Has _)        _  = False
 satisfiesCond (Filter test arg1 arg2) n =
-  (filterTestPred test) (filterArgToNode arg1 n) (filterArgToNode arg2 n)
+  filterTestPred test (filterArgToNode arg1 n) (filterArgToNode arg2 n)
 
 filterTestPred :: FilterTest -> (Node -> Node -> Bool)
 filterTestPred TestEq    = (==)
@@ -94,7 +94,7 @@ filterTestPred TestLt    = (<)
 filterTestPred TestGtEq  = (>=)
 filterTestPred TestLtEq  = (<=)
 filterTestPred TestContains = \n1 n2 -> case n1 of
-                                          NList ns -> elem n2 ns
+                                          NList ns -> n2 `elem` ns
                                           _        -> False
 
 filterArgToNode :: FilterArg -> Node -> Node
@@ -105,13 +105,13 @@ filterArgToNode (DateConstant d) _ = NDate d
 
 compareNodeAt :: [(String,SortDirection)] -> Node -> Node -> Ordering
 compareNodeAt ((a,dir'):as) (NMap xs) (NMap ys) = reverseIfDescending dir' $
-  case ((lookup a xs), (lookup a ys)) of
-       (Just x, Just y)   -> case compare x y of
-                                   EQ -> compareNodeAt as (NMap xs) (NMap ys)
-                                   z  -> z
-       (Just _, Nothing)  -> GT
-       (Nothing, Just _)  -> LT
-       (Nothing, Nothing) -> EQ
+  case (lookup a xs, lookup a ys) of
+    (Just x, Just y)   -> case compare x y of
+                            EQ -> compareNodeAt as (NMap xs) (NMap ys)
+                            z  -> z
+    (Just _, Nothing)  -> GT
+    (Nothing, Just _)  -> LT
+    (Nothing, Nothing) -> EQ
 compareNodeAt [] (NMap _) (NMap _) = EQ
 compareNodeAt _ _ _ = error "sortby and groupby can be used only on lists of maps"
 
@@ -123,20 +123,23 @@ reverseIfDescending Descending GT = LT
 
 parseDataField :: Node -> DataSpec
 parseDataField n@(NString s) = case parse pDataField s s of
-  Right (f, Nothing, opts)  -> DataFromFile f opts
-  Right (f, Just query, opts) -> DataFromSqlite3 f query opts
-  Left err        -> if "from" `isPrefixOf` (dropWhile isSpace $ map toLower s)
-                        then error $ "Error parsing data field: " ++ show err
-                        else DataConstant n
+  Right (f, Nothing, opts) ->
+    DataFromFile f opts
+  Right (f, Just query, opts) ->
+    DataFromSqlite3 f query opts
+  Left err ->
+    if "from" `isPrefixOf` dropWhile isSpace (map toLower s)
+      then error $ "Error parsing data field: " ++ show err
+      else DataConstant n
 parseDataField n = DataConstant n
 
-pDataField :: GenParser Char st (String, Maybe String,[DataOption])
+pDataField :: GenParser Char st (String, Maybe String, [DataOption])
 pDataField = do
   spaces
   pString "from"
   pSpace
   fname <- pIdentifier <?> "name of YAML, CSV or SQLite3 file"
-  query <- (optionMaybe $ pQuery) <?> "a SQL query"
+  query <- optionMaybe pQuery <?> "a SQL query"
   opts <- many $ (pOptWhere <?> "where [CONDITION]")
               <|> (pOptLimit <?> "limit [NUMBER]")
               <|> (pOptOrderBy <?> "order by [CONDITION]")
@@ -147,7 +150,7 @@ pDataField = do
   eof
   return (fname, query, opts)
 
-pIdentifier :: GenParser Char st [Char]
+pIdentifier :: GenParser Char st String
 pIdentifier = spaces >> (pQuoted '\'' <|> pQuoted '"' <|> many (noneOf " \t\n<>=;,'\""))
 
 -- | Case-insensitive string parser.
@@ -158,10 +161,10 @@ pString s = do
      then return s
      else mzero
 
-pQuoted :: Char -> GenParser Char st [Char]
+pQuoted :: Char -> GenParser Char st String
 pQuoted delim = try $ do
   char delim
-  res <- many (noneOf [delim] <|> (try $ char '\\' >> char delim))
+  res <- many (noneOf [delim] <|> try (char '\\' >> char delim))
   char delim
   return res
 
@@ -171,8 +174,7 @@ pQuery = try $ do
   spaces
   pString "query"
   pSpace
-  res <- pQuoted '"'
-  return res
+  pQuoted '"'
 
 pOptLimit :: GenParser Char st DataOption
 pOptLimit = try $ do
@@ -194,15 +196,17 @@ pOptOrderBy = try $ do
   keys <- spaces >> sepBy1 pSortKey (try $ pSpace >> spaces >> pString "then" >> pSpace)
   return $ OrderBy keys
 
-pSortKey :: GenParser Char st ([Char], SortDirection)
+pSortKey :: GenParser Char st (String, SortDirection)
 pSortKey = do
   res <- pIdentifier
   dir' <- option Ascending pAscDesc
   return (res, dir')
 
 pAscDesc :: GenParser Char st SortDirection
-pAscDesc = (try $ pSpace >> pString "desc" >> return Descending)
-       <|> (try $ pSpace >> pString "asc" >> return Ascending)
+pAscDesc =
+  try (pSpace >> pString "desc" >> return Descending)
+  <|>
+  try (pSpace >> pString "asc" >> return Ascending)
 
 pOptGroupBy :: GenParser Char st DataOption
 pOptGroupBy = try $ do
@@ -225,7 +229,7 @@ pOptWhere = try $ do
   return $ Where cond
 
 pBooleanCondition :: GenParser Char st FilterCond
-pBooleanCondition = spaces >> ( pHas <|> pNot <|> pAnd <|> pOr <|> pInParens pBooleanCondition <|> pBasicCond)
+pBooleanCondition = spaces >> (pHas <|> pNot <|> pAnd <|> pOr <|> pInParens pBooleanCondition <|> pBasicCond)
 
 pInParens :: GenParser Char st a -> GenParser Char st a
 pInParens innerParser = try $ do
@@ -237,10 +241,10 @@ pInParens innerParser = try $ do
   return res
 
 pNot :: GenParser Char st FilterCond
-pNot = try $ pString "not" >> pSpace >> liftM Not pBooleanCondition
+pNot = try $ pString "not" >> pSpace >> fmap Not pBooleanCondition
 
 pHas :: GenParser Char st FilterCond
-pHas = try $ pString "has" >> pSpace >> liftM Has (pQuoted '"' <|> pQuoted '\'')
+pHas = try $ pString "has" >> pSpace >> fmap Has (pQuoted '"' <|> pQuoted '\'')
 
 pAnd :: GenParser Char st FilterCond
 pAnd = try $ do
@@ -278,7 +282,7 @@ pStringOrDateConstant = do
        Nothing -> return $ StringConstant str
 
 pAttrValue :: GenParser Char st FilterArg
-pAttrValue = liftM AttrValue pIdentifier
+pAttrValue = fmap AttrValue pIdentifier
 
 pFilterTest :: GenParser Char st FilterTest
 pFilterTest = do

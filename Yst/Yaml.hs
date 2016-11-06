@@ -19,9 +19,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Yst.Yaml (readYamlFile) where
 
+import qualified Data.Maybe as Maybe
 import           Data.Yaml
 import           Yst.Types
 
+
 readYamlFile :: FilePath -> IO Node
 readYamlFile f =
-  (maybe (error $ "Could not parse " ++ f) id) `fmap` decodeFile f
+  Maybe.fromMaybe (error $ "Could not parse " ++ f) `fmap` decodeFile f
