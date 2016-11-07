@@ -1,0 +1,51 @@
+- url      : index.html
+  title    : Home
+  source   : content/index.md
+
+- url      : mission.html
+  title    : Mission
+  source   : content/mission.md
+
+- url      : plan.html
+  title    : Project plan
+  source   : content/plan.md
+
+- url      : roadmap.html
+  title    : Roadmap
+  source   : content/roadmap.md
+
+- url      : vision.html
+  title    : Long term vision
+  source   : content/vision.md
+
+- url      : spec.html
+  title    : Tox specification
+  source   : content/spec.md
+
+- url      : contributing.html
+  title    : Contributing
+  source   : content/contributing.md
+  inmenu   : no
+
+- url      : cla.html
+  title    : CLA
+  source   : content/cla.md
+  inmenu   : no
+
+- url      : development.html
+  title    : Development process
+  source   : content/development.md
+
+- url      : designs.html
+  title    : Designs
+  source   : content/designs.md
+
+- url      : design/template.html
+  title    : Design Proposal Template
+  source   : content/design/template.md
+  inmenu   : no
+
+- url      : design/testing.html
+  title    : Tox Core Test Framework
+  source   : content/design/testing.md
+  inmenu   : no

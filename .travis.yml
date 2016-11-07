@@ -15,8 +15,16 @@ install:
 
 script:
   - CABAL_FLAGS="--enable-tests --enable-benchmarks --enable-library-coverage"
-  - cabal install --only-dependencies $CABAL_FLAGS || cat /home/travis/.cabal/logs/JuicyPixels-3.2.8.log
+  - cabal install --only-dependencies $CABAL_FLAGS
   - cabal configure $CABAL_FLAGS
   - cabal build
   - cabal test
   - cabal check
+  - make toktok-site
+
+after_success:
+  # Build and upload the TokTok website.
+  - git config --global push.default simple
+  - git config --global user.email "deploy@travis-ci.org"
+  - git config --global user.name "Travis Deployer"
+  - if [ -n "$GITHUB_TOKEN" ]; then make upload; fi
