@@ -1,4 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables #-}
 {-
 Copyright (C) 2009 John MacFarlane <jgm@berkeley.edu>
 
@@ -20,7 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Yst.Yaml (readYamlFile) where
 
 import qualified Data.Maybe as Maybe
-import           Data.Yaml
+import           Data.Yaml  (decodeFile)
+
 import           Yst.Types
 
 

@@ -1,6 +1,4 @@
-{-# LANGUAGE CPP                 #-}
-{-# LANGUAGE OverloadedStrings   #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-
 Copyright (C) 2009 John MacFarlane <jgm@berkeley.edu>
 
@@ -21,20 +19,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Yst.Render (renderPage) where
 
-import           Control.Monad
-import           Data.Char
+import           Control.Monad       (forM)
+import           Data.Char           (toLower)
 import           Data.List           (intercalate)
 import           Data.List.Split     (wordsBy)
 import           Data.Maybe          (fromMaybe)
 import           Data.Text           (pack)
 import           Data.Text.Lazy      (unpack)
-import           Data.Time
+import           Data.Time           (getCurrentTime, utctDay)
 import           Lucid
-import           System.Directory
-import           System.FilePath
+import           System.Directory    (canonicalizePath)
+import           System.FilePath     (takeExtension)
 import           Text.Pandoc         hiding (Format)
 import           Text.Pandoc.Error   (handleError)
 import           Text.StringTemplate
+
 import           Yst.Data
 import           Yst.Types
 import           Yst.Util
@@ -135,17 +134,17 @@ renderPage site page = do
 
 converterForFormat :: Format -> String -> String
 converterForFormat f =
-  let reader = handleError . readMarkdown def{readerSmart = True}
-  in  case f of
-       HtmlFormat          -> writeHtmlString def{ writerHtml5 = True, writerNumberSections = True, writerHighlight = True } . reader
-       LaTeXFormat         -> writeLaTeX def . reader
-       PlainFormat         -> id
-       ConTeXtFormat       -> writeConTeXt def . reader
-       ManFormat           -> writeMan def . reader
-       RTFFormat           -> writeRTF def . reader
-       DocBookFormat       -> writeDocbook def . reader
-       TexinfoFormat       -> writeTexinfo def . reader
-       OpenDocumentFormat  -> writeOpenDocument def . reader
+  let reader = handleError . readMarkdown def { readerSmart = True } in
+  case f of
+    HtmlFormat         -> writeHtmlString def{ writerHtml5 = True, writerNumberSections = True, writerHighlight = True } . reader
+    LaTeXFormat        -> writeLaTeX def . reader
+    PlainFormat        -> id
+    ConTeXtFormat      -> writeConTeXt def . reader
+    ManFormat          -> writeMan def . reader
+    RTFFormat          -> writeRTF def . reader
+    DocBookFormat      -> writeDocbook def . reader
+    TexinfoFormat      -> writeTexinfo def . reader
+    OpenDocumentFormat -> writeOpenDocument def . reader
 
 getTemplate :: Stringable a => String -> STGroup a -> IO (StringTemplate a)
 getTemplate templateName templateGroup =

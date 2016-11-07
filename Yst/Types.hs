@@ -1,5 +1,5 @@
-{-# LANGUAGE FlexibleInstances    #-}
-{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE CPP               #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-
 Copyright (C) 2009 John MacFarlane <jgm@berkeley.edu>
 
@@ -20,15 +20,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 module Yst.Types where
 
-import           Control.Monad
-import           Data.Aeson
-import           Data.Char
+import           Control.Monad       (msum, mzero)
+import           Data.Aeson          (FromJSON (..), Result (..), ToJSON (..),
+                                      Value (..), fromJSON)
+import           Data.Char           (toUpper)
 import qualified Data.HashMap.Strict as H
 import qualified Data.Map            as M
 import           Data.Scientific     (base10Exponent, coefficient)
 import qualified Data.Text           as T
-import           Data.Time
-import           Text.StringTemplate
+#if MIN_VERSION_time(1,5,0)
+import           Data.Time           (Day, ParseTime, defaultTimeLocale,
+                                      formatTime, parseTimeM)
+#else
+import           Data.Time           (Day, ParseTime, formatTime, parseTime)
+import           System.Locale       (defaultTimeLocale)
+#endif
+import           Text.StringTemplate (StringTemplateShows (..), ToSElem (..),
+                                      stShowsToSE)
 
 
 data Site = Site
@@ -192,5 +200,8 @@ instance ToSElem Node
 parseAsDate :: (ParseTime t) => String -> Maybe t
 parseAsDate s =
   msum $ map (`parsetimeWith` s) formats
-   where parsetimeWith = parseTimeM True defaultTimeLocale
+   where parsetimeWith = parseTime defaultTimeLocale
          formats = ["%x","%m/%d/%Y", "%D","%F", "%d %b %Y"]
+#if MIN_VERSION_time(1,5,0)
+         parseTime = parseTimeM True
+#endif

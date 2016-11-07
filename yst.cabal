@@ -77,7 +77,7 @@ Executable           yst
     , scientific
     , split
     , text
-    , time                  >= 1.5
+    , time
     , unordered-containers
     , yaml
   ghc-options:

@@ -1,9 +1,11 @@
 module Yst.Sqlite3 (readSqlite3) where
 
-import           Data.Maybe
-import           Database.HDBC
-import           Database.HDBC.Sqlite3
-import           Yst.Types
+import           Data.Maybe            (fromMaybe)
+import           Database.HDBC         (disconnect, execute, getColumnNames,
+                                        prepare, sFetchAllRows')
+import           Database.HDBC.Sqlite3 (connectSqlite3)
+
+import           Yst.Types             (Node (..), parseAsDate)
 
 
 readSqlite3 :: FilePath -> String -> IO Node

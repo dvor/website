@@ -30,11 +30,14 @@ module Yst.Util
 
 import           Data.Char        (isSpace)
 import           Data.List        (intercalate)
-import           System.Directory
-import           System.Exit
-import           System.FilePath
+import           System.Directory (doesDirectoryExist, doesFileExist,
+                                   getDirectoryContents)
+import           System.Exit      (ExitCode (..), exitWith)
+import           System.FilePath  (dropExtension, takeExtension, (</>))
 import           System.IO        (hPutStrLn, stderr)
+
 import           Yst.Types
+
 
 -- | Strip blank lines from a file.
 stripBlanks :: String -> String

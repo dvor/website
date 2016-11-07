@@ -1,5 +1,4 @@
 {-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
-{-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-
 Copyright (C) 2009 John MacFarlane <jgm@berkeley.edu>
@@ -22,17 +21,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Yst.Data (getData, parseDataField) where
 
 import qualified Control.Exception             as E
-import           Control.Monad
-import           Data.Char
+import           Control.Monad                 (mzero)
+import           Data.Char                     (isSpace, toLower)
 import           Data.List                     (isPrefixOf, nub, sortBy)
 import           Data.Maybe                    (fromMaybe)
 import           System.FilePath               (takeExtension)
 import           Text.ParserCombinators.Parsec
-import           Yst.CSV
+
+import           Yst.CSV                       (readCSVFile)
 import           Yst.Sqlite3                   (readSqlite3)
 import           Yst.Types
-import           Yst.Util
-import           Yst.Yaml
+import           Yst.Util                      (errorExit, searchPath)
+import           Yst.Yaml                      (readYamlFile)
 
 
 findData :: Site -> FilePath -> IO FilePath

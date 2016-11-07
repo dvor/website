@@ -19,14 +19,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Yst.Config (parseConfigFile, parseIndexFile) where
 
 import           Control.Arrow   (second)
-import           Data.Char
+import           Data.Char       (toLower)
 import qualified Data.Map        as M
-import qualified Data.Maybe      as Maybe
-import           System.FilePath
-import           Yst.Data
+import           System.FilePath (dropExtension)
+
+import           Yst.Data        (parseDataField)
 import           Yst.Types
-import           Yst.Util
-import           Yst.Yaml
+import           Yst.Util        (errorExit, fromNString, getStrAttrWithDefault,
+                                  getStrListWithDefault)
+import           Yst.Yaml        (readYamlFile)
 
 
 parseConfigFile :: FilePath -> IO Site

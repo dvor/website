@@ -20,9 +20,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 module Yst.CSV (readCSVFile) where
 
 import           Control.Exception (SomeException, catch)
-import           Text.CSV
+import           Text.CSV          (CSV, Field, parseCSV)
+
 import           Yst.Types
-import           Yst.Util
+import           Yst.Util          (errorExit, stripBlanks)
 
 
 readCSVFile :: FilePath -> IO Node
