@@ -7,6 +7,7 @@ WEB_REPO := git@github.com:TokTok/$(WEB_NAME)
 endif
 
 toktok-site: dist/build/yst/yst $(shell find toktok -type f)
+	rm -rf $@
 	cd toktok && ../$< && mv site ../$@
 
 dist/build/yst/yst: dist/setup-config $(wildcard Yst/*)

@@ -1,6 +1,8 @@
 - url      : index.html
   title    : Home
-  source   : content/index.md
+  template : content/index.st
+  data     :
+    repos : FROM repos.yaml ORDER BY name
 
 - url      : mission.html
   title    : Mission
