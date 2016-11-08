@@ -3,7 +3,7 @@
 This document serves as a non-binding simpler version of the [Contributor
 License Agreement](cla). Any errors in or misinterpretations of the following
 text have no legal effect. See CLA for the real thing that you can feed to
-[lawyer cats](http://www.legalcheek.com/wp-content/uploads/2012/04/lawyer-cat1.jpg).
+![lawyer cats](img/lawyer-cat.jpg).
 
 # Definitions
 
