@@ -7,9 +7,6 @@
           href="$root$css/main.css"/>
     <link rel="stylesheet" type="text/css" media="screen"
           href="$root$css/rust.css"/>
-    <link rel="stylesheet" type="text/css" media="screen"
-          href="css/slider-def.css"/>
-    <style>.switch > ul > li { cursor: default; }</style>
   </head>
   <body>
     <nav id="sidemenu">

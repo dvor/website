@@ -1,16 +1,16 @@
 % Contributing to TokTok
 
 This document serves as a non-binding simpler version of the [Contributor
-License Agreement](cla). Any errors in or misinterpretations of the following
-text have no legal effect. See CLA for the real thing that you can feed to
-![lawyer cats](img/lawyer-cat.jpg).
+License Agreement](cla.html). Any errors in or misinterpretations of the
+following text have no legal effect. See CLA for the real thing that you can
+feed to [lawyer cats](img/lawyer-cat.jpg).
 
 # Definitions
 
 - "We" is toktok-team.
 - "You" is you, the person who submits code to GitHub.
 - "Contribution" is the code or documentation you wrote, pictures you drew, etc.
-- "Copyright" is [this scary thing](http://en.wikipedia.org/wiki/Copyright).
+- "Copyright" is [this scary thing](https://en.wikipedia.org/wiki/Copyright).
 - "Material" is the project you're submitting contributions to.
 - "Submit" is making a pull request on our GitHub repository.
 - "Submission Date" is the date on which you made the PR.
@@ -93,9 +93,8 @@ agreement.
 
 ## Other agreements
 
-There are no other agreements, only
-~~[ZUUL](http://onqny.com/wp-content/uploads/2013/02/the-gatekeeper.png)~~CLA.
-Things we agree on via IRC or otherwise are not legally binding.
+There are no other agreements, only ~~[ZUUL](img/zuul.jpg)~~CLA.  Things we
+agree on e.g. via IRC or otherwise are not legally binding.
 
 ## Third parties
 

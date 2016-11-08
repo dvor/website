@@ -24,7 +24,6 @@ script:
   - cabal test
   - cabal check
   - make toktok-site
-  - (cd toktok-site && linkchecker `find . -name "*.html"` || true)
 
 after_success:
   # Build and upload the TokTok website.

@@ -98,14 +98,14 @@ caused by unavoidable weaknesses in the type system.
 # Requirements
 
 - Code review
-    - [Reviewable](reviewable.io) for code reviews.
+    - [Reviewable](https://reviewable.io) for code reviews.
     - Every PR is required to go through review, no commits can be made
       directly to the master branch without review (Github branch protection).
     - No branches other than master on the main repositories; contributors work
       on their own forks.
 - Testing
-    - [Travis](travis-ci.org) for continuous integration.
-    - [Coveralls](coveralls.io) for test coverage recording.
+    - [Travis](https://travis-ci.org) for continuous integration.
+    - [Coveralls](https://coveralls.io) for test coverage recording.
     - Github branch protection requires CI tests to pass and coverage to not
       decrease before merge.
     - If multiple repositories: core CI must run client tests.
@@ -147,14 +147,14 @@ you're able to justify your reasoning.
 
 We have four main repositories:
 
-- [toxcore](https://github.com/TokTok/toxcore) is the stable C toxcore
+- [toxcore](https://github.com/TokTok/c-toxcore) is the stable C toxcore
   implementation we maintain. This repository applies strict contribution rules
   and new features cannot enter unless they comply with the standards.
-- [client](https://github.com/TokTok/client) (TBD) is the main GUI client we
-  will invest most resources in. Its test suite is used in toxcore's CI runs to
+- [client](https://github.com/TokTok/qTox) (TBD) is the main GUI client we will
+  invest most resources in. Its test suite is used in toxcore's CI runs to
   ensure no incompatible changes are introduced within the support horizon.
-- [hstox](https://github.com/TokTok/hstox) is the Haskell test framework used
-  to validate the C toxcore implementation. This validation involves
+- [hstox](https://github.com/TokTok/hs-toxcore) is the Haskell test framework
+  used to validate the C toxcore implementation. This validation involves
   implementing most of the protocol specification, so by the end this will be
   for the most part a reference implementation. This repository also contains
   the specification itself.

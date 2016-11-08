@@ -1,18 +1,9 @@
-The TokTok Project goal is to [**reinvent the internet**](vision).
+The TokTok Project goal is to [**reinvent the internet**](vision.html).
 
 But in the meantime, we are a **focussed** effort to bring high quality privacy
 enhancing software to everybody.
 
-<div id="slider">
-<div class="slides">
-<div class="slider"><div class="image"><img src="img/toktok/chatlist-small.png" /></div></div>
-<div class="slider"><div class="image"><img src="img/toktok/chat-small.png" /></div></div>
-<div class="slider"><div class="image"><img src="img/toktok/profile-small.png" /></div></div>
-<div class="slider"><div class="image"><img src="img/toktok/calling-small.png" /></div></div>
-<div class="slider"><div class="image"><img src="img/toktok/search-small.png" /></div></div>
-</div>
-<div class="switch"><ul><li><div class="on"></div></li><li></li><li></li><li></li><li></li></ul></div>
-</div>
+[!TokTok Android client](img/toktok/chat-small.png)
 
 # Current focus
 
@@ -22,9 +13,9 @@ moving on to the next target.
 
 Our current focus is:
 
-- Create a [full specification](spec) of the Tox protocol.
-- Create a free [reference implementation](https://github.com/TokTok/hstox) of
-  that protocol.
+- Create a [full specification](spec.html) of the Tox protocol.
+- Create a free [reference implementation](https://github.com/TokTok/hs-toxcore)
+  of that protocol.
 
 # Contact us
 

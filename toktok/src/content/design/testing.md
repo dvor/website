@@ -28,9 +28,8 @@ written by the same person who wrote the tested code. This tends to lead to
 implementation-guided tests, which easily omits some corner cases.
 
 Testing new implementations such as [Zetox](https://github.com/zetok/tox),
-[Gotox](https://github.com/vikstrous/gotox),
-[ScalaTox](https://github.com/iphydf/tox4j/tree/master/projects/tox4j/src/main/java/im/tox/core),
-and [HsTox](https://github.com/TokTok/hstox) involves implementing networking
+[Gotox](https://github.com/vikstrous/gotox), and
+[HsTox](https://github.com/TokTok/hs-toxcore) involves implementing networking
 and having it communicate with an existing Tox node running the C reference
 implementation. Doing automated tests of this kind is costly, as it requires
 running a Tox node and establishing a connection to it.  These tests are also
@@ -166,12 +165,6 @@ Tests can be skipped by sending a `Skipped` result. These tests will be ignored 
 Field            | Type     | Length
 ---------------- | -------- | ------
 0x02 (`Skipped`) | `Tag`    | 1 byte
-
-### Tests
-
-The following tests are defined in the
-[Test.hs](https://github.com/TokTok/hstox/blob/master/src/Network/Tox/ExternalTest/Test.hs)
-file.
 
 ## Reference cross-validation
 

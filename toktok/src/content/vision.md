@@ -89,7 +89,7 @@ exact details, yet, but the current plan is:
 
 # In the meantime..
 
-..we're [building privacy enhancing software for everyone](mission).
+..we're [building privacy enhancing software for everyone](mission.html).
 
 This document presents the long term vision, but like we said, we are a
 focussed group of software and systems engineers, cryptographers, and
