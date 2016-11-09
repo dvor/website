@@ -16,6 +16,8 @@ install:
   # Install build dependencies and semdoc.
   - cabal install --only-dependencies $CABAL_FLAGS semdoc ./
   - cabal install semdoc
+  # Fetch hs-toxcore to get the spec sources.
+  - git clone --depth=1 https://github.com/TokTok/hs-toxcore ../hs-toxcore
 
 script:
   # Build yst and website.
