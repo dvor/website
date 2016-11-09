@@ -3,7 +3,7 @@ The TokTok Project goal is to [**reinvent the internet**](vision.html).
 But in the meantime, we are a **focussed** effort to bring high quality privacy
 enhancing software to everybody.
 
-[!TokTok Android client](img/toktok/chat-small.png)
+![TokTok Android client](img/toktok/chat-small.png)
 
 # Current focus
 
