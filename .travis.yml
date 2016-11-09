@@ -20,7 +20,7 @@ install:
 script:
   # Build yst and website.
   - cabal configure $CABAL_FLAGS
-  - cabal build
+  - cabal build --ghc-options=-dynamic
   - cabal test
   - cabal check
   - make toktok-site
