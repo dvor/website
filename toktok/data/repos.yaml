@@ -14,7 +14,6 @@
 - name: pull-status
 - name: py-toxcore-c
 - name: qTox
-- name: ratox
 - name: semdoc
 - name: spec
 - name: tokstyle
