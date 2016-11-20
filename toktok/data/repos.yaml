@@ -1,6 +1,7 @@
 - name: apidsl
 - name: c-toxcore
 - name: dockerfiles
+- name: github-tools
 - name: hs-msgpack
 - name: hs-msgpack-rpc
 - name: hs-toxcore
@@ -11,7 +12,6 @@
 - name: jvm-sbt-plugins
 - name: jvm-toxcore-api
 - name: jvm-toxcore-c
-- name: pull-status
 - name: py-toxcore-c
 - name: qTox
 - name: semdoc
