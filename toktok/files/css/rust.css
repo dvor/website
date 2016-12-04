@@ -32,7 +32,7 @@
     font-family: 'Source Serif Pro';
     font-style: italic;
     font-weight: 400;
-    src: url("Heuristica-Italic.woff") format('woff');
+    src: local('Heuristica Italic'), url("Heuristica-Italic.woff") format('woff');
 }
 @font-face {
     font-family: 'Source Serif Pro';
@@ -48,9 +48,7 @@
 }
 
 *:not(body) {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 /* General structure */
@@ -65,7 +63,6 @@ body {
     line-height: 1.428571429;
 
     -webkit-font-feature-settings: "kern", "liga";
-    -moz-font-feature-settings: "kern", "liga";
     font-feature-settings: "kern", "liga";
 }
 @media (min-width: 768px) {
@@ -74,11 +71,11 @@ body {
     }
 }
 
-h1, h2, h3, h4, h5, h6, nav, #versioninfo {
+h1, h2, h3, h4, h5, h6, nav {
     font-family: "Fira Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 h1, h2, h3, h4, h5, h6 {
-    counter-reset: paragraph; // to reset paragraph counter on every header
+    counter-reset: paragraph; /*to reset paragraph counter on every header*/
     color: black;
     font-weight: 400;
     line-height: 1.1;
@@ -88,22 +85,11 @@ h1, h2, h3 {
     margin-bottom: 15px;
 }
 h1 {
-    margin-bottom: 20px;
-}
-h4, h5, h6 {
-    margin-top: 12px;
-    margin-bottom: 10px;
-    padding: 5px 10px;
-}
-h5, h6 {
-    text-decoration: underline;
-}
-
-h1 {
     font-size: 28px;
     font-weight: 500;
     padding: .1em .4em;
     border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
 }
 h1.title {
     line-height: 1.5em;
@@ -118,8 +104,16 @@ h3 {
     padding: .2em .7em;
     border-bottom: 1px solid #DDE8FC;
 }
+h4, h5, h6 {
+    margin-top: 12px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+}
 h4 {
     font-size: 22px;
+}
+h5, h6 {
+    text-decoration: underline;
 }
 h5 {
     font-size: 20px;
@@ -146,24 +140,14 @@ p > a.paragraph {
     margin-left: -29px;
     color: #CCC;
 }
-
+p, nav {
+    margin: 0 0 1em 0;
+}
 nav {
     column-count: auto;
     -moz-column-count: auto;
     -webkit-column-count: auto;
     font-size: 15px;
-    margin: 0 0 1em 0;
-}
-p {
-    margin: 0 0 1em 0;
-}
-
-strong {
-    font-weight: bold;
-}
-
-em {
-    font-style: italic;
 }
 
 footer {
@@ -176,7 +160,6 @@ footer {
 }
 
 /* Links layout */
-
 a {
     text-decoration: none;
     color: #428BCA;
@@ -195,14 +178,15 @@ a:hover, a:active {
     outline: 0;
 }
 
-h1 a:link, h1 a:visited, h2 a:link, h2 a:visited,
-h3 a:link, h3 a:visited, h4 a:link, h4 a:visited,
-h5 a:link, h5 a:visited {color: black;}
-h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover,
-h5 a:hover {text-decoration: none;}
+h1 a:link, h1 a:visited, h2 a:link, h2 a:visited, h3 a:link, h3 a:visited, 
+h4 a:link, h4 a:visited, h5 a:link, h5 a:visited {
+    color: black;
+}
+h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover {
+    text-decoration: none;
+}
 
 /* Code */
-
 pre, code {
     font-family: "Source Code Pro", Menlo, Monaco, Consolas, "DejaVu Sans Mono", monospace;
     word-wrap: break-word;
@@ -230,64 +214,7 @@ a > code {
     color: #428BCA;
 }
 
-.section-header > a > code {
-    color: #8D1A38;
-}
-
-/* Code highlighting */
-pre.rust .kw { color: #8959A8; }
-pre.rust .kw-2, pre.rust .prelude-ty { color: #4271AE; }
-pre.rust .number, pre.rust .string { color: #718C00; }
-pre.rust .self, pre.rust .boolval, pre.rust .prelude-val,
-pre.rust .attribute, pre.rust .attribute .ident { color: #C82829; }
-pre.rust .comment { color: #8E908C; }
-pre.rust .doccomment { color: #4D4D4C; }
-pre.rust .macro, pre.rust .macro-nonterminal { color: #3E999F; }
-pre.rust .lifetime { color: #B76514; }
-
 /* The rest */
-
-#versioninfo {
-    text-align: center;
-    margin: 0.5em;
-    font-size: 1.1em;
-}
-@media (min-width: 992px) {
-    #versioninfo {
-        font-size: 0.8em;
-        position: fixed;
-        bottom: 0px;
-        right: 0px;
-    }
-    .white-sticker {
-        background-color: #fff;
-        margin: 2px;
-        padding: 0 2px;
-        border-radius: .2em;
-    }
-}
-#versioninfo a.hash {
-    color: gray;
-    font-size: 80%;
-}
-
-blockquote {
-    color: #000;
-    margin: 20px 0;
-    padding: 15px 20px;
-    background-color: #f2f7f9;
-    border-top: .1em solid #e5eef2;
-    border-bottom: .1em solid #e5eef2;
-}
-blockquote p {
-    font-size: 17px;
-    font-weight: 300;
-    line-height: 1.4;
-}
-blockquote p:last-child {
-    margin-bottom: 0;
-}
-
 ul, ol {
     padding-left: 25px;
 }
@@ -309,13 +236,11 @@ nav ul {
 }
 
 /* Only display one level of hierarchy in the TOC */
-
 nav ul ul {
     display: block;
 }
 
-sub,
-sup {
+sub, sup {
     font-size: 75%;
     line-height: 0;
     position: relative;
@@ -335,39 +260,15 @@ table {
     overflow-x: auto;
     display: block;
 }
-
 table tr.odd {
     background: #eee;
 }
-
-table td,
-table th {
+table td, table th {
     border: 1px solid #ddd;
     padding: 5px;
 }
 
 /* Code snippets */
-
-.rusttest { display: none; }
-pre.rust { position: relative; }
-a.test-arrow {
-    display: inline-block;
-    position: absolute;
-
-    background-color: #4e8bca;
-    color: #f5f5f5;
-    padding: 5px 10px 5px 10px;
-    border-radius: 5px;
-    font-size: 130%;
-    top: 5px;
-    right: 5px;
-}
-
-.unstable-feature {
-    border: 2px solid red;
-    padding: 5px;
-}
-
 @media (min-width: 1170px) {
     pre {
         font-size: 15px;
@@ -393,7 +294,7 @@ a.test-arrow {
     a[href^="javascript:"]:after, a[href^="#"]:after {
         content: "";
     }
-    pre, blockquote {
+    pre {
         border: 1px solid #999;
         page-break-inside: avoid;
     }
@@ -401,7 +302,7 @@ a.test-arrow {
         margin: 2cm .5cm;
     }
     h1:not(.title), h2, h3 {
-        border-bottom: 0px none;
+        border-bottom: 0 none;
     }
     p, h2, h3 {
         orphans: 3;
@@ -410,17 +311,7 @@ a.test-arrow {
     h2, h3 {
         page-break-after: avoid;
     }
-    table {
-        border-collapse: collapse !important;
-    }
     table td, table th {
         background-color: #fff !important;
     }
-}
-
-#keyword-table-marker + table thead { display: none; }
-#keyword-table-marker + table td { border: none; }
-#keyword-table-marker + table {
-    margin-left: 2em;
-    margin-bottom: 1em;
 }

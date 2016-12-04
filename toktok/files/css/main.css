@@ -28,43 +28,30 @@ h2, h3, h4, h5, h6 {
 }
 
 @media (min-width: 1050px) {
-  nav#sidemenu {
+  #sidemenu {
     background-color: #fff;
     box-shadow: 0 0 3px #888888;
     position: fixed;
     top: 1ex;
     left: 1ex;
-    padding-left: 1em;
-    padding-top: 1em;
-    padding-right: 1em;
-    padding-bottom: 1em;
-}
+    padding: 1em;
+  }
 }
 
-nav#sidemenu > ul {
+#sidemenu > ul {
   margin: 0;
   padding: 0;
 }
 
-nav#sidemenu li.current a {
+#sidemenu li.current a {
   color: black;
 }
 
-/*
-nav#sidemenu a.nav-header {
-color: black;
-}
- */
-
-  figure {
-    margin-left: 0;
+figure {
+  margin-left: 0;
 }
 
-.kw {
-  color: blue;
-}
-
-.ot {
+.kw, .ot {
   color: blue;
 }
 
