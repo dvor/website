@@ -14,8 +14,8 @@ install:
   - cabal update
   - CABAL_FLAGS="--enable-tests --enable-benchmarks --enable-library-coverage"
   # Install build dependencies and semdoc.
-  - cabal install --only-dependencies $CABAL_FLAGS semdoc ./
-  - cabal install semdoc
+  - cabal install --only-dependencies $CABAL_FLAGS github-tools semdoc ./
+  - cabal install github-tools semdoc
   # Fetch hs-toxcore to get the spec sources.
   - git clone --depth=1 https://github.com/TokTok/hs-toxcore ../hs-toxcore
 
