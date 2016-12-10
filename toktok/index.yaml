@@ -16,6 +16,15 @@
   title    : Roadmap
   source   : content/roadmap.md
 
+- url      : changelog.html
+  title    : Changelogs
+  source   : content/changelog.md
+
+- url      : changelog/c-toxcore.html
+  title    : Changelog for c-toxcore
+  source   : content/changelog/c-toxcore.md
+  inmenu   : no
+
 - url      : vision.html
   title    : Long term vision
   source   : content/vision.md

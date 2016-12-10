@@ -6,14 +6,13 @@ else
 WEB_REPO := git@github.com:TokTok/$(WEB_NAME)
 endif
 
-SEMDOC := $(shell which semdoc)
-ifeq ($(SEMDOC),)
-SEMDOC := true
-endif
+SEMDOC		:= $(shell which semdoc)
+CHANGELOG	:= $(shell which changelog)
 
 toktok-site: dist/build/yst/yst $(shell find toktok -type f)
 	rm -rf $@
-	cd ../hs-toxcore && $(SEMDOC) src/tox/Network/Tox.lhs $(CURDIR)/toktok/src/content/spec.md
+	if [ -n "$(SEMDOC)" ]; then cd ../hs-toxcore && $(SEMDOC) src/tox/Network/Tox.lhs $(CURDIR)/toktok/src/content/spec.md; fi
+	if [ -n "$(CHANGELOG)" ]; then $(CHANGELOG) TokTok c-toxcore > $(CURDIR)/toktok/src/content/changelog/c-toxcore.md; fi
 	cd toktok && ../$< && mv site ../$@
 	! which linkchecker || linkchecker --ignore-url "https://travis-ci.org.*" --ignore-url "irc://.*" $@
 

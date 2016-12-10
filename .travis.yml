@@ -1,4 +1,5 @@
 language: generic
+# sudo is only required because the non-sudo environment doesn't have enough RAM.
 sudo: required
 
 cache:
@@ -10,7 +11,7 @@ env: CABALVER=1.18 GHCVER=7.8.4
 addons: {apt: {packages: [alex-3.1.7, happy-1.19.5, cabal-install-1.18, ghc-7.8.4, linkchecker], sources: [hvr-ghc]}}
 
 install:
-  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:/opt/alex/3.1.7/bin:/opt/happy/1.19.5/bin:$PATH
+  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:/opt/alex/3.1.7/bin:/opt/happy/1.19.5/bin:$HOME/.cabal/bin:$PATH
   - cabal update
   - CABAL_FLAGS="--enable-tests --enable-benchmarks --enable-library-coverage"
   # Install build dependencies and semdoc.
