@@ -35,6 +35,7 @@ import           Data.Time           (Day, ParseTime, defaultTimeLocale,
 import           Data.Time           (Day, ParseTime, formatTime, parseTime)
 import           System.Locale       (defaultTimeLocale)
 #endif
+import           Text.Pandoc         (WriterOptions)
 import           Text.StringTemplate (StringTemplateShows (..), ToSElem (..),
                                       stShowsToSE)
 
@@ -49,7 +50,7 @@ data Site = Site
   , indexFile     :: FilePath
   , pageIndex     :: M.Map String Page
   , navigation    :: [NavNode]
-  } deriving (Show, Read, Eq)
+  } deriving (Show)
 
 
 data Source
@@ -64,8 +65,9 @@ data Page = Page
   , requiresFiles :: [FilePath]
   , pageUrl       :: String
   , pageTitle     :: String
+  , pageOptions   :: WriterOptions
   , pageInMenu    :: Bool
-  } deriving (Show, Read, Eq)
+  } deriving (Show)
 
 data DataSpec
   = DataConstant Node

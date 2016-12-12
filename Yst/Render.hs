@@ -121,7 +121,7 @@ renderPage site page = do
                     $ templ
   layoutTempl <- getTemplate layout g
   let format = formatFromExtension (stripStExt layout)
-  let contents = converterForFormat format rawContents
+  let contents = converterForFormat (pageOptions page) format rawContents
   return $ render
          . setManyAttrib attrs
          . setAttribute "sitetitle" (siteTitle site)
@@ -132,19 +132,26 @@ renderPage site page = do
          . setAttribute "nav" menuHtml
          $ layoutTempl
 
-converterForFormat :: Format -> String -> String
-converterForFormat f =
+converterForFormat :: WriterOptions -> Format -> String -> String
+converterForFormat wrOpts f =
   let reader = handleError . readMarkdown def { readerSmart = True } in
   case f of
-    HtmlFormat         -> writeHtmlString def{ writerHtml5 = True, writerNumberSections = True, writerHighlight = True } . reader
-    LaTeXFormat        -> writeLaTeX def . reader
+    HtmlFormat         -> writeHtmlString htmlOpts . reader
+    LaTeXFormat        -> writeLaTeX wrOpts . reader
     PlainFormat        -> id
-    ConTeXtFormat      -> writeConTeXt def . reader
-    ManFormat          -> writeMan def . reader
-    RTFFormat          -> writeRTF def . reader
-    DocBookFormat      -> writeDocbook def . reader
-    TexinfoFormat      -> writeTexinfo def . reader
-    OpenDocumentFormat -> writeOpenDocument def . reader
+    ConTeXtFormat      -> writeConTeXt wrOpts . reader
+    ManFormat          -> writeMan wrOpts . reader
+    RTFFormat          -> writeRTF wrOpts . reader
+    DocBookFormat      -> writeDocbook wrOpts . reader
+    TexinfoFormat      -> writeTexinfo wrOpts . reader
+    OpenDocumentFormat -> writeOpenDocument wrOpts . reader
+  where
+    htmlOpts = wrOpts
+      { writerHtml5      = True
+      , writerHighlight  = True
+      , writerStandalone = True
+      , writerTemplate   = "<div>$toc$</div><div>$body$</div>"
+      }
 
 getTemplate :: Stringable a => String -> STGroup a -> IO (StringTemplate a)
 getTemplate templateName templateGroup =

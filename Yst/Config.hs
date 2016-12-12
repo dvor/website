@@ -15,19 +15,29 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -}
-
-module Yst.Config (parseConfigFile, parseIndexFile) where
+module Yst.Config
+  ( parseConfigFile
+  , parseIndexFile
+  ) where
 
 import           Control.Arrow   (second)
 import           Data.Char       (toLower)
 import qualified Data.Map        as M
 import           System.FilePath (dropExtension)
+import           Text.Pandoc     (WriterOptions (..), def)
 
 import           Yst.Data        (parseDataField)
 import           Yst.Types
 import           Yst.Util        (errorExit, fromNString, getStrAttrWithDefault,
                                   getStrListWithDefault)
 import           Yst.Yaml        (readYamlFile)
+
+
+setWriterOptions :: String -> WriterOptions -> WriterOptions
+setWriterOptions ""                opts = opts
+setWriterOptions "number-sections" opts = opts { writerNumberSections = True }
+setWriterOptions "toc"             opts = opts { writerTableOfContents = True, writerTOCDepth = 2 }
+setWriterOptions opt                  _ = error $ "invalid writer options: " ++ opt
 
 
 parseConfigFile :: FilePath -> IO Site
@@ -87,6 +97,7 @@ processPage xs =
                               Just _           -> error "'requires' must be scalar or list"
        , pageUrl      = url
        , pageTitle    = getStrAttrWithDefault "title" (dropExtension url) xs
+       , pageOptions  = foldr setWriterOptions def (getStrListWithDefault "options" "" xs)
        , pageInMenu   = map toLower (getStrAttrWithDefault "inmenu" "yes" xs) `notElem` ["no","false"]
        }
     where getPageField f =

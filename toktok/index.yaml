@@ -32,6 +32,7 @@
 - url      : spec.html
   title    : Tox specification
   source   : content/spec.md
+  options  : [number-sections, toc]
 
 - url      : contributing.html
   title    : Contributing
