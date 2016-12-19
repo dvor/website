@@ -17,7 +17,7 @@
 - name: semdoc
 - name: spec
 - name: tokstyle
-- name: toktok
+- name: toktok-android
 - name: toktok-stack
 - name: toktok.github.io
 - name: website
